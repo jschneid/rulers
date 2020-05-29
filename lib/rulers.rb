@@ -1,22 +1,24 @@
 require 'rulers/version'
 require 'rulers/array'
+require 'rulers/routing'
 
 module Rulers
   class Application
     def call(env)
-      # Get the comma-separated numeric values of the "args" query string key, if there was one.
-      # e.g. "http://localhost:3001/?args=1,2,3" will yield [1,2,3]
-      args = Rack::Utils.parse_nested_query(env['QUERY_STRING'])['args']&.split(',')&.map(&:to_i)
+      klass, act = get_controller_and_action(env)
+      controller = klass.new(env)
+      text = controller.send(act)
+      [200, { 'Content-Type' => 'text/html' }, [text]]
+    end
+  end
 
-      message = "<p>Hello from Jon's implementation of Ruby on Rulers!</p>"
+  class Controller
+    def initialize(env)
+      @env = env
+    end
 
-      unless args.nil?
-        message += "<p>The provided arguments were: #{args.pretty_print}</p>"
-        message += "<p>Sum of the given arguments: #{args.sum}</p>"
-        message += "<p>Product of the given arguments: #{args.multiply}</p>"
-      end
-
-      [200, { 'Content-Type' => 'text/html' }, [message]]
+    def env
+      @env
     end
   end
 end
