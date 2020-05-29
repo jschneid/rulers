@@ -9,6 +9,8 @@ module Rulers
         return [404, { 'Content-Type' => 'text/html' }, []]
       end
 
+      env['PATH_INFO'] = '/quotes/a_quote' if env['PATH_INFO'] == '/'
+
       klass, act = get_controller_and_action(env)
       controller = klass.new(env)
 
