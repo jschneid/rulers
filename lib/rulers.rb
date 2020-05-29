@@ -11,7 +11,14 @@ module Rulers
 
       klass, act = get_controller_and_action(env)
       controller = klass.new(env)
-      text = controller.send(act)
+
+      begin
+        text = controller.send(act)
+      rescue Exception
+        error_message = "HTTP 500 error. It's not you, it's us."
+        return [500, { 'Content-Type' => 'text/html' }, [error_message]]
+      end
+
       [200, { 'Content-Type' => 'text/html' }, [text]]
     end
   end
