@@ -1,6 +1,15 @@
 require_relative 'test_helper'
 
+class TestController < Rulers::Controller
+  def index
+    'Hello!'
+  end
+end
+
 class TestApp < Rulers::Application
+  def get_controller_and_action(env)
+    [TestController, 'index']
+  end
 end
 
 class RulersAppTest < Test::Unit::TestCase
@@ -15,22 +24,6 @@ class RulersAppTest < Test::Unit::TestCase
 
     assert last_response.ok?
     body = last_response.body
-    assert body['Hello']
-  end
-
-  def test_sum
-    get '/?args=2,2,3,3'
-
-    assert last_response.ok?
-    body = last_response.body
-    assert body['Sum of the given arguments: 10']
-  end
-
-  def test_sum__no_args
-    get '/'
-
-    assert last_response.ok?
-    body = last_response.body
-    assert_nil body['Sum of the given arguments']
+    assert body['Hello!']
   end
 end
