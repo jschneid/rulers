@@ -16,8 +16,9 @@ module Rulers
 
       begin
         text = controller.send(act)
-      rescue Exception
-        error_message = "HTTP 500 error. It's not you, it's us."
+      rescue Exception => e
+        error_message = "<p>HTTP 500 error. It's not you, it's us.</p>"
+        error_message += "<p>#{e}</p>"
         return [500, { 'Content-Type' => 'text/html' }, [error_message]]
       end
 
