@@ -3,6 +3,8 @@ require 'multi_json'
 module Rulers
   module Model
     class FileModel
+      @@cached_models = {}
+
       def initialize(filename)
         @filename = filename
 
@@ -29,11 +31,13 @@ module Rulers
      end
 
       def self.find(id)
-        begin
-          FileModel.new("db/quotes/#{id}.json")
-          # rescue
-            # return nil
-        end
+        return @@cached_models[id.to_s] if @@cached_models.key?(id.to_s)
+
+        file_model = FileModel.new("db/quotes/#{id}.json")
+
+        @@cached_models[id.to_s] = file_model
+
+        file_model
       end
 
       def self.all
