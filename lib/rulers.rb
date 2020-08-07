@@ -20,6 +20,7 @@ module Rulers
       rescue Exception => e
         error_message = "<p>HTTP 500 error. It's not you, it's us.</p>"
         error_message += "<p>#{e}</p>"
+        error_message += "<p>#{e.backtrace}</p>"
         return [500, { 'Content-Type' => 'text/html' }, [error_message]]
       end
 

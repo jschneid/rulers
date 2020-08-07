@@ -22,6 +22,12 @@ module Rulers
         @hash[name.to_s] = value
       end
 
+      def save!
+        File.open("db/quotes/#{@id}.json", 'w') do |f|
+          f.write MultiJson.dump(@hash)
+        end
+     end
+
       def self.find(id)
         begin
           FileModel.new("db/quotes/#{id}.json")
@@ -50,8 +56,8 @@ module Rulers
           f.write <<~TEMPLATE
             {
               "submitter": "#{hash['submitter']}",
-              "quote": "#{hash["quote"]}",
-              "attribution": "#{hash["attribution"]}"
+              "quote": "#{hash['quote']}",
+              "attribution": "#{hash['attribution']}"
             }
           TEMPLATE
         end
