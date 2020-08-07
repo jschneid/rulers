@@ -40,6 +40,11 @@ module Rulers
         file_model
       end
 
+      def self.find_all_by_submitter(submitter)
+        all_file_models = FileModel.all
+        all_file_models.select { |fm| fm['submitter'] == submitter }
+      end
+
       def self.all
         files = Dir['db/quotes/*.json']
         files.map { |f| FileModel.new f }
