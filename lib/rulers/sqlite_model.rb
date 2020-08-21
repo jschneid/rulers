@@ -16,6 +16,8 @@ module Rulers
           val.to_s
         when String
           "'#{val}'"
+        when NilClass # JSS
+          'null'
         else
           raise "Can't change #{val.class} to SQL!"
         end
@@ -73,6 +75,35 @@ module Rulers
 
       def []=(name, value)
         @hash[name.to_s] = value
+      end
+
+      def save!
+        unless @hash['id']
+          self.class.create
+          return true
+        end
+
+        fields = @hash.map do |k, v|
+          "#{k}=#{self.class.to_sql(v)}"
+        end.join ','
+
+        DB.execute <<~SQL
+          UPDATE #{self.class.table}
+          SET #{fields}
+          WHERE id = #{@hash['id']}
+        SQL
+
+        true
+      end
+
+      def save
+        self.save! rescue false
+      end
+
+      ['posted', 'title', 'body'].each do |method|
+        define_method(method) {
+          @hash[method].to_s
+        }
       end
     end
   end
