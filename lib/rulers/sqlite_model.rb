@@ -100,10 +100,19 @@ module Rulers
         self.save! rescue false
       end
 
-      ['posted', 'title', 'body'].each do |method|
-        define_method(method) {
-          @hash[method].to_s
-        }
+      def method_missing(m, *args, &block)
+        # Create a new column accessor method for the specified method name -- but only
+        # if the method name actually matches one of the columns in the schema
+        if self.class.schema.keys.include?(m.to_s)
+          self.class.define_method(m) {
+            send('[]', m)
+          }
+        else
+          return super
+        end
+
+        # Call the newly-defined accessor method
+        send(m, *args)
       end
     end
   end
