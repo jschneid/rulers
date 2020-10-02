@@ -19,7 +19,11 @@ class RouteObject
     regexp_parts = parts.map do |part|
       if part[0] == ':'
         vars << part[1..-1]
-        "([a-zA-Z0-9_]+)"
+        if part == ':id'
+          "([0-9]+)"
+        else
+          "([a-zA-Z0-9_]+)"
+        end
       elsif part[0] == '*'
         vars << part[1..-1]
         "(.*)"
